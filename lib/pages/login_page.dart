@@ -1,3 +1,4 @@
+import 'package:chat_app/pages/registerscreen.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
@@ -68,7 +69,7 @@ class _LoginPageState extends State<LoginPage> {
                     },
                   ),
                   const SizedBox(
-                    height: 20,
+                    height: 25
                   ),
                   SizedBox(
                     width: double.infinity,
@@ -77,19 +78,25 @@ class _LoginPageState extends State<LoginPage> {
                             elevation: 0,
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(30)),
-                            backgroundColor: Color(0xFFee7b64)),
+                            backgroundColor: const Color(0xFFee7b64)),
                         onPressed: () {},
-                        child: Text('Sign in')),
+                        child: const Text('Sign in')),
                   ),
-                  Text.rich(TextSpan(
+                  Text.rich(
+                    TextSpan(
                       text: 'dont have an account?',
-                      style: TextStyle(color: Colors.black, fontSize: 14),children: [
-                        TextSpan(text: ' register here',recognizer: TapGestureRecognizer()..onTap)
-                      ]),
-                      
-                      )
+                      style: const TextStyle(color: Colors.black, fontSize: 14),
+                      children: [
+                        TextSpan(
+                            text: ' register here',
+                            recognizer: TapGestureRecognizer()..onTap=(){
+                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => const Register(),));
+                            } )
+                      ],
+                    ),
+                  )
                 ],
-              )),
+              ),),
         ),
       ),
     );
