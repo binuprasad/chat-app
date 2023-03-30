@@ -1,4 +1,10 @@
+import 'package:chat_app/helper/helper_functions.dart';
+import 'package:chat_app/pages/home_screen.dart';
 import 'package:chat_app/pages/registerscreen.dart';
+import 'package:chat_app/service/auth_service.dart';
+import 'package:chat_app/service/database_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
@@ -15,10 +21,12 @@ class _LoginPageState extends State<LoginPage> {
   final formkey = GlobalKey<FormState>();
   String email = "";
   String password = "";
+  bool isLoading = false;
+  Authservice authservice = Authservice();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
+      body: isLoading?Center(child: CircularProgressIndicator(color: Colors.red,),): SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 80, horizontal: 20),
           child: Form(
@@ -100,5 +108,38 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
+  }
+  login()async{
+     if (formkey.currentState!.validate()) {
+      setState(() {
+        isLoading = true;
+      });
+      await authservice
+          .loginUserWithEmailAndPassword( email, password)
+          .then((value) async {
+        if (value == true) {
+
+          QuerySnapshot snapshot =
+              await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid)
+                  .gettingUserData(email);
+
+              //saving our values to shared preferences
+               await Helperfunctions.saveUserLogedInStatus(true);
+          await Helperfunctions.saveUserEmailSF(email);
+          await Helperfunctions.saveUserNameSF(snapshot.docs[0]['fullName']);
+      
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(
+                builder: (context) => const HomeScreen(),
+              ),
+              (route) => false);
+        } else {
+          showSnackBar(context, Colors.red, value);
+          setState(() {
+            isLoading = false;
+          });
+        }
+      });
+    }
   }
 }

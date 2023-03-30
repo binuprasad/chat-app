@@ -16,4 +16,9 @@ class DatabaseService{
       "uid":uid
     });
   }
+    Future gettingUserData(String email) async {
+    QuerySnapshot snapshot =
+        await userCollection.where("email", isEqualTo: email).get();
+    return snapshot;
+  }
 }
