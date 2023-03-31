@@ -29,4 +29,16 @@ static  String userLogedInKey="userlogen";
     SharedPreferences pref =await SharedPreferences.getInstance();
     return pref.getBool(userLogedInKey);
   }
+
+  //
+  static Future<String?>getUserEmailSF()async{
+    SharedPreferences pref =await SharedPreferences.getInstance();
+    return pref.getString(userEmailKey);
+  }
+
+  //
+  static Future<String?>getUserNameSF()async{
+    SharedPreferences pref =await SharedPreferences.getInstance();
+    return pref.getString(userNameKey);
+  }
 }
