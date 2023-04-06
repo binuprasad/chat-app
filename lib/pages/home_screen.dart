@@ -3,6 +3,8 @@ import 'package:chat_app/pages/login_page.dart';
 import 'package:chat_app/pages/profile_page.dart';
 import 'package:chat_app/pages/search.dart';
 import 'package:chat_app/service/auth_service.dart';
+import 'package:chat_app/service/database_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -16,6 +18,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Authservice authservice = Authservice();
   String userName = '';
   String email = '';
+  Stream? group;  
 
   @override
   void initState() {
@@ -34,6 +37,12 @@ class _HomeScreenState extends State<HomeScreen> {
     await Helperfunctions.getUserNameSF().then((value) {
       setState(() {
         userName = value!;
+      });
+    });
+
+    await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).getUserGroups().then((snapshot){
+      setState(() {
+        group=snapshot;
       });
     });
   }
@@ -94,7 +103,10 @@ class _HomeScreenState extends State<HomeScreen> {
             ListTile(
               onTap: () {
                 Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) =>  ProfilePage(email: email, userName: userName,),
+                  builder: (context) => ProfilePage(
+                    email: email,
+                    userName: userName,
+                  ),
                 ));
               },
               selectedColor: Colors.red,
@@ -104,7 +116,7 @@ class _HomeScreenState extends State<HomeScreen> {
               leading: const Icon(
                 Icons.group,
                 color: Colors.grey,
-              ),  
+              ),
               title: const Text(
                 'Profile',
                 style: TextStyle(color: Colors.black),
@@ -154,6 +166,62 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
         ),
+      ),
+      body: grouplist(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          popUpDialogu(context);
+        },
+        elevation: 0,
+        backgroundColor: Colors.red,
+        child: const Icon(
+          Icons.add,
+          size: 30,
+        ),
+      ),
+    );
+  }
+
+  popUpDialogu(BuildContext context) {}
+  grouplist() {
+    return StreamBuilder(
+      stream: group,
+      builder:  (context,AsyncSnapshot snapshot){
+      if(snapshot.hasData){
+        if(snapshot.data['groups']!=null){
+          if(snapshot.data['groups'].legth !=0){
+            
+          }
+          else{
+            return noGroupWidget();
+
+          }
+
+        }else{
+          return noGroupWidget();
+        }
+
+      }else{
+       return const Center(child: CircularProgressIndicator(color: Colors.red,),);
+      }
+    },);
+  }
+
+  noGroupWidget(){
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 25),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          GestureDetector(
+            onTap: () {
+              popUpDialogu(context);
+            },
+            child: Icon(Icons.add_circle,color: Colors.grey[700],size: 75,)),
+          const SizedBox(height: 10,),
+          const Text("You've not joined any groups, tap on the add icon to create a group or also search from the top search button",textAlign: TextAlign.center,)
+        ],
       ),
     );
   }

@@ -9,14 +9,14 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   if (kIsWeb) {
-    Firebase.initializeApp(
+   await Firebase.initializeApp(
         options: const FirebaseOptions(
             apiKey: "AIzaSyDJjUb61H9A82YWKRrfMEZPY31zrXefOEg",
             appId: "1:154883009843:web:d3630ef7c4ec3a691d6246",
             messagingSenderId: "154883009843",
             projectId: "chat-app-36d33"));
   } else {
-    Firebase.initializeApp();
+   await Firebase.initializeApp();
   }
 
   runApp(const MyApp());
