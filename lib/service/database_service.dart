@@ -46,9 +46,32 @@ class DatabaseService {
       ),
       "groupId": groupDocumentReference.id,
     });
-    DocumentReference userDocumentReference =userCollection.doc(uid);
+    DocumentReference userDocumentReference = userCollection.doc(uid);
     return await userDocumentReference.update({
-      "groups":FieldValue.arrayUnion(['${groupDocumentReference.id}_$groupName'])
+      "groups":
+          FieldValue.arrayUnion(['${groupDocumentReference.id}_$groupName'])
     });
+  }
+
+  //getting the chat
+  getChat(String groupId) async {
+    return groupCollection
+        .doc(groupId)
+        .collection('messeges')
+        .orderBy('time')
+        .snapshots();
+  }
+
+  Future getGroupAdmin(String groupId)async{
+    DocumentReference d = groupCollection.doc(groupId);
+    DocumentSnapshot documentSnapshot = await d.get();
+    return documentSnapshot['admin'];
+
+  }
+
+  //get group members
+  getGroupMembers(groupId)async{
+    return groupCollection.doc( groupId).snapshots();
+
   }
 }
