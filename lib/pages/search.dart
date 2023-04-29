@@ -171,20 +171,24 @@ class _SearchScreenState extends State<SearchScreen> {
         onTap: () async {
           await DatabaseService(uid: user!.uid)
               .toggleGroupJoin(groupId, userName, groupName);
-              if(isJoined){
-                setState(() {
-                  isJoined =!isJoined;
-                });
-                showSnackBar(context, Colors.green, 'Successfully joined the group');
-                Future.delayed(Duration(seconds: 2),(){
-                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => ChatPage(groupId: groupId, groupName: groupName, userName: userName),));
-                });
-              }else{
-                setState(() {
-                  isJoined = !isJoined;
-                });
-                showSnackBar(context, Colors.red, 'left the group$groupName');
-              }
+          if (isJoined) {
+            setState(() {
+              isJoined = !isJoined;
+            });
+            showSnackBar(
+                context, Colors.green, 'Successfully joined the group');
+            Future.delayed(const Duration(seconds: 2), () {
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => ChatPage(
+                    groupId: groupId, groupName: groupName, userName: userName),
+              ));
+            });
+          } else {
+            setState(() {
+              isJoined = !isJoined;
+            });
+            showSnackBar(context, Colors.red, 'left the group$groupName');
+          }
         },
         child: isJoined
             ? Container(
